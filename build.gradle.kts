@@ -133,3 +133,18 @@ subprojects {
         }
     }
 }
+
+tasks.withType<Test> {
+    val harnessJavaAgent = System.getProperty("HARNESS_JAVA_AGENT")
+    if (harnessJavaAgent != null) {
+        jvmArgs(harnessJavaAgent)
+    }
+}
+
+gradle.projectsEvaluated {
+    tasks.withType<Test> {
+        filter {
+            isFailOnNoMatchingTests = false
+        }
+    }
+}
