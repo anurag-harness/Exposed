@@ -18,6 +18,21 @@ allprojects {
     if (this.name != "exposed-tests" && this.name != "exposed-bom" && this != rootProject) {
         configurePublishing()
     }
+
+    tasks.withType<Test> {
+        val harnessJavaAgent = System.getProperty("HARNESS_JAVA_AGENT")
+        if (harnessJavaAgent != null) {
+            jvmArgs(harnessJavaAgent)
+        }
+    }
+    
+    gradle.projectsEvaluated {
+        tasks.withType<Test> {
+            filter {
+                isFailOnNoMatchingTests = false
+            }
+        }
+    }
 }
 
 apiValidation {
@@ -130,21 +145,6 @@ subprojects {
         dialects("sqlserver")
         dependencies {
             dependency(rootProject.libs.mssql)
-        }
-    }
-}
-
-tasks.withType<Test> {
-    val harnessJavaAgent = System.getProperty("HARNESS_JAVA_AGENT")
-    if (harnessJavaAgent != null) {
-        jvmArgs(harnessJavaAgent)
-    }
-}
-
-gradle.projectsEvaluated {
-    tasks.withType<Test> {
-        filter {
-            isFailOnNoMatchingTests = false
         }
     }
 }
